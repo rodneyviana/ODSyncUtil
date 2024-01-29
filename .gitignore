@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/.vs/ODSyncUtil
+/ODSyncUtil/x64/Debug
+/x64/Debug
