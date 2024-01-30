@@ -32,8 +32,18 @@
     <ClInclude Include="ApiStatus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="packages.config" />
+    <None Include="Get-ODStatus.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ODSyncUtil.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

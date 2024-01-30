@@ -1,6 +1,48 @@
 
 #include "ApiStatus.h"
 
+std::wstring serializeStateVector(std::vector<OneDriveState> states) {
+    rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
+    rapidjson::Writer<rapidjson::GenericStringBuffer<rapidjson::UTF16<>>, rapidjson::UTF16<>> writer(buffer);
+    writer.StartArray();
+    for (std::vector<OneDriveState>::iterator it = states.begin(); it != states.end(); ++it) {
+        writer.StartObject();
+        writer.Key(L"SyncRootId");
+        writer.String(it->SyncRootId);
+        writer.Key(L"CurrentState");
+        writer.Int(it->CurrentState);
+        writer.Key(L"Sid");
+        writer.String(it->Sid);
+        writer.Key(L"UserName");
+        writer.String(it->UserName);
+        writer.Key(L"ServiceName");
+        writer.String(it->ServiceName);
+        writer.Key(L"Label");
+        writer.String(it->Label);
+        writer.Key(L"IconUri");
+        writer.String(it->IconUri);
+        writer.Key(L"isQuotaAvailable");
+        writer.Bool(it->isQuotaAvailable);
+        writer.Key(L"TotalQuota");
+        writer.Uint64(it->TotalQuota);
+        writer.Key(L"UsedQuota");
+        writer.Uint64(it->UsedQuota);
+        writer.Key(L"QuotaLabel");
+        writer.String(it->QuotaLabel);
+        writer.Key(L"IconColorA");
+        writer.Uint(it->IconColorA);
+        writer.Key(L"IconColorR");
+        writer.Uint(it->IconColorR);
+        writer.Key(L"IconColorG");
+        writer.Uint(it->IconColorG);
+        writer.Key(L"IconColorB");
+        writer.Uint(it->IconColorB);
+        writer.EndObject();
+    }
+    writer.EndArray();
+    return std::wstring(buffer.GetString());
+}
+
 GUID CLSID_FileCoAuth_StorageProviderStatusUISourceFactory = { /* 0827D883-485C-4D62-BA2C-A332DBF3D4B0 */  0x0827D883, 0x485C,  0x4D62, {0xBA, 0x2C, 0xA3, 0x32, 0xDB, 0xF3, 0xD4, 0xB0} };
 
 void safeStringCopy(void* dest, int dest_size, void* source, int source_size) {
@@ -10,6 +52,47 @@ void safeStringCopy(void* dest, int dest_size, void* source, int source_size) {
     {
         std::memcpy(dest, source, realSize);
     }
+}
+
+#include <windows.h>
+#include <sddl.h>
+#include <string>
+
+std::wstring extactType(const std::wstring& str) {
+	std::size_t first = str.find('!');
+    std::size_t second = str.find('!', first + 1);
+    std::size_t third = str.find('|', second + 1);
+    if (first != std::wstring::npos && second != std::wstring::npos && third != std::wstring::npos) {
+		return str.substr(second + 1, third - second - 1);
+	}
+	return L"";
+}
+
+std::wstring extractSid(const std::wstring& str) {
+    std::size_t first = str.find('!');
+    std::size_t second = str.find('!', first + 1);
+    if (first != std::wstring::npos && second != std::wstring::npos) {
+        return str.substr(first + 1, second - first - 1);
+    }
+    return L"";
+}
+
+std::wstring GetUserFromSid(std::wstring sidString) {
+    PSID pSid;
+    WCHAR name[256];
+    DWORD cchName = 256;
+    WCHAR referencedDomainName[256];
+    DWORD cchReferencedDomainName = 256;
+    SID_NAME_USE eUse;
+
+    if (ConvertStringSidToSidW(sidString.c_str(), &pSid)) {
+        if (LookupAccountSidW(NULL, pSid, name, &cchName, referencedDomainName, &cchReferencedDomainName, &eUse)) {
+            std::wstring domain(referencedDomainName);
+            std::wstring user(name);
+            return domain + L"\\" + user;
+        }
+    }
+    return L"";
 }
 
 HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUISource* pSource, OneDriveState& currentState)
@@ -112,6 +195,15 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
 
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState)
 {
+    const auto sid = extractSid(syncrootId);
+    const auto user = GetUserFromSid(sid);
+    const auto type = extactType(syncrootId);
+
+    safeStringCopy(&(currentState.SyncRootId), MAX_SYNC_ROOT_ID, (void*)syncrootId.c_str(), syncrootId.size());
+    safeStringCopy(&(currentState.Sid), MAX_SID, (void*)sid.c_str(), sid.size());
+    safeStringCopy(&(currentState.UserName), MAX_USER_NAME, (void*)user.c_str(), user.size());
+    safeStringCopy(&(currentState.ServiceName), MAX_SERVICE_NAME, (void*)type.c_str(), type.size());
+
     ABI::Windows::Storage::Provider::IStorageProviderStatusUISourceFactory* pFactory = nullptr;
     IUnknown* pUnk = nullptr;
     ABI::Windows::Storage::Provider::IStorageProviderStatusUISource* pSource = nullptr;
