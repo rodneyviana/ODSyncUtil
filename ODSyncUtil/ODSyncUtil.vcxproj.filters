@@ -38,8 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="packages.config" />
     <None Include="Get-ODStatus.ps1" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ODSyncUtil.rc">

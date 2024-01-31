@@ -19,7 +19,9 @@ int main()
 	for (std::vector<std::wstring>::iterator it = subKeys.begin(); it != subKeys.end(); ++it) {
 		OneDriveState state;
 		HRESULT hr = getInstanceStatus(*it, state);
-		states.push_back(state);
+		if (SUCCEEDED(hr)) {
+			states.push_back(state);
+		}
 	}
 	delete syncRootManager;
 	std::wstring result = serializeStateVector(states);

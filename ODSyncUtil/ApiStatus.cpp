@@ -98,16 +98,13 @@ std::wstring GetUserFromSid(std::wstring sidString) {
 HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUISource* pSource, OneDriveState& currentState)
 {
     HRESULT getHR = S_OK;
-
     ABI::Windows::Storage::Provider::IStorageProviderStatusUI* status = nullptr;
     HRESULT hr = pSource->GetStatusUI(&status);
-
     if (SUCCEEDED(hr))
     {
         ABI::Windows::Storage::Provider::StorageProviderState state = {};
         getHR = status->get_ProviderState(&state);
-        //std::cout << "////////// Latest status UI is ////////////" << std::endl;
-        //std::cout << "Current State is: " << state << " . HRESULT from get_ProviderState is: " << std::hex << getHR << std::endl;
+
         currentState.CurrentState = state;
         // Test ProviderStateLabel
         HSTRING stateLable = nullptr;
@@ -115,8 +112,6 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
         UINT32 stateLableLength = 0;
         auto rawLabel = WindowsGetStringRawBuffer(stateLable, &stateLableLength);
         safeStringCopy(&(currentState.Label), MAX_STATE_LABEL, (void*)rawLabel, stateLableLength);
-        //std::wstring stateLableString = WindowsGetStringRawBuffer(stateLable, &stateLableLength);
-        //std::wcout << L"Current ProviderStateLabel is: " << stateLableString << " size: " << stateLableLength << " . HRESULT from get_ProviderState is: " << std::hex << getHR << std::endl;
 
 
         // Test ProviderStateIcon
@@ -136,7 +131,6 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
         else
         {
             return getHR;
-            //std::cout << "Error: HRESULT from get_ProviderStateIcon is: " << std::hex << getHR << std::endl;
         }
 
         // Test StorageProviderQuotaUI
@@ -193,16 +187,50 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
 
 }
 
+/// <summary>
+///   Get Current User SID ID  
+/// </summary>
+/// <returns>SID string</returns>
+
+std::wstring getCurrentUserSid() {
+	HANDLE hToken;
+	DWORD dwLength;
+	PTOKEN_USER pTokenUser;
+	std::wstring sidString;
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+		GetTokenInformation(hToken, TokenUser, NULL, 0, &dwLength);
+		pTokenUser = (PTOKEN_USER)HeapAlloc(GetProcessHeap(), 0, dwLength);
+        LPWSTR rawSidString = NULL;
+        if (pTokenUser != NULL) {
+            if (GetTokenInformation(hToken, TokenUser, pTokenUser, dwLength, &dwLength)) {
+				ConvertSidToStringSidW(pTokenUser->User.Sid, &rawSidString);
+                sidString = rawSidString;
+                LocalFree(rawSidString);
+			}
+			HeapFree(GetProcessHeap(), 0, pTokenUser);
+		}
+		CloseHandle(hToken);
+	}
+	return sidString;
+}
+
+
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState)
 {
     const auto sid = extractSid(syncrootId);
     const auto user = GetUserFromSid(sid);
     const auto type = extactType(syncrootId);
+    ZeroMemory(&currentState, sizeof(OneDriveState));
 
     safeStringCopy(&(currentState.SyncRootId), MAX_SYNC_ROOT_ID, (void*)syncrootId.c_str(), syncrootId.size());
     safeStringCopy(&(currentState.Sid), MAX_SID, (void*)sid.c_str(), sid.size());
     safeStringCopy(&(currentState.UserName), MAX_USER_NAME, (void*)user.c_str(), user.size());
     safeStringCopy(&(currentState.ServiceName), MAX_SERVICE_NAME, (void*)type.c_str(), type.size());
+
+    auto userSid = getCurrentUserSid();
+    if (sid != userSid) {
+		return ERROR_INVALID_SID;
+    }
 
     ABI::Windows::Storage::Provider::IStorageProviderStatusUISourceFactory* pFactory = nullptr;
     IUnknown* pUnk = nullptr;
