@@ -41,7 +41,19 @@ struct  OneDriveState {
     BYTE IconColorB;
 };
 
+/// <summary>
+///     Serialize the state vector to a JSON string
+/// </summary>
+/// <param name="states">The state vector</param>
+/// <returns>JSON string</returns>
 std::wstring serializeStateVector(std::vector<OneDriveState> states);
+
+/// <summary>
+///   Get the status of the sync root
+/// </summary>
+/// <param name="syncrootId">The sync root id</param>
+/// <param name="currentState">The state structure</param>
+/// <returns>HRESULT</returns>
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState);
 
 #endif // !ONE_DRIVE_STATUS_H

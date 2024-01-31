@@ -4,6 +4,7 @@
 
 
 // Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+
 SyncRootReader::SyncRootReader()
 {
 	// Open the key
@@ -18,7 +19,6 @@ SyncRootReader::~SyncRootReader()
 	RegCloseKey(m_hKey);
 }
 
-// Enumerate the subkeys
 std::vector<std::wstring> SyncRootReader::EnumerateSubKeys()
 {
 	std::vector<std::wstring> subKeys;

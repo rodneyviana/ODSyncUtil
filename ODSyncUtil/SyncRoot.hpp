@@ -9,14 +9,25 @@
 #include <wtypes.h>
 #include <stdexcept>
 
-// Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+
+/// <summary>
+///  Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+/// </summary>
 class SyncRootReader
 {
 private:
 	HKEY m_hKey;
 public:
+	/// <summary>
+	///  Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+	/// </summary>
+	/// <returns></returns>
 	SyncRootReader();
-	// Enumerate the subkeys
+
+	/// <summary>
+	///  Enumerate the subkeys of the SyncRootManager key
+	/// </summary>
+	/// <returns>A vector of SyncRootId strings</returns>
 	std::vector<std::wstring> EnumerateSubKeys();
 	~SyncRootReader();
 };

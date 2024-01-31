@@ -2,6 +2,7 @@
 #include "ApiStatus.h"
 #include <stdexcept>
 
+
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
     rapidjson::Writer<rapidjson::GenericStringBuffer<rapidjson::UTF16<>>, rapidjson::UTF16<>> writer(buffer);
@@ -47,7 +48,7 @@ std::wstring serializeStateVector(std::vector<OneDriveState> states) {
 GUID CLSID_FileCoAuth_StorageProviderStatusUISourceFactory = { /* 0827D883-485C-4D62-BA2C-A332DBF3D4B0 */  0x0827D883, 0x485C,  0x4D62, {0xBA, 0x2C, 0xA3, 0x32, 0xDB, 0xF3, 0xD4, 0xB0} };
 
 /// <summary>
-///     Sa
+///     Copy raw pointer string from source to destination
 /// </summary>
 /// <param name="dest"></param>
 /// <param name="dest_size"></param>
@@ -67,6 +68,11 @@ void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_si
 #include <sddl.h>
 #include <string>
 
+/// <summary>
+///   Extract the type of service from the syncrootId
+/// </summary>
+/// <param name="str">The Sync Root Id</param>
+/// <returns>The type of service</returns>
 std::wstring extactType(const std::wstring& str) {
 	std::size_t first = str.find('!');
     std::size_t second = str.find('!', first + 1);
@@ -77,6 +83,11 @@ std::wstring extactType(const std::wstring& str) {
 	return L"";
 }
 
+/// <summary>
+///  Extract the SID from the syncrootId
+/// </summary>
+/// <param name="str">The Sync Root Id</param>
+/// <returns>SID string</returns>
 std::wstring extractSid(const std::wstring& str) {
     std::size_t first = str.find('!');
     std::size_t second = str.find('!', first + 1);
@@ -86,6 +97,11 @@ std::wstring extractSid(const std::wstring& str) {
     return L"";
 }
 
+/// <summary>
+///   Get User Name from SID
+/// </summary>
+/// <param name="sidString">SID string</param>
+/// <returns>User Name</returns>
 std::wstring GetUserFromSid(std::wstring sidString) {
     PSID pSid;
     WCHAR name[256];
@@ -104,6 +120,12 @@ std::wstring GetUserFromSid(std::wstring sidString) {
     return L"";
 }
 
+/// <summary>
+///   Create the state structure from the status UI of the provider
+/// </summary>
+/// <param name="pSource">The status UI source</param>
+/// <param name="currentState">The state structure</param>
+/// <returns>HRESULT</returns>
 HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUISource* pSource, OneDriveState& currentState)
 {
     HRESULT getHR = S_OK;
@@ -197,10 +219,9 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
 }
 
 /// <summary>
-///   Get Current User SID ID  
+///   Get Current User's SID ID  
 /// </summary>
 /// <returns>SID string</returns>
-
 std::wstring getCurrentUserSid() {
 	HANDLE hToken;
 	DWORD dwLength = 0;
@@ -223,7 +244,6 @@ std::wstring getCurrentUserSid() {
 	}
 	return sidString;
 }
-
 
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState)
 {
