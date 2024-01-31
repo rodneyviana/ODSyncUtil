@@ -1,5 +1,6 @@
 
 #include "ApiStatus.h"
+#include <stdexcept>
 
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
@@ -45,13 +46,21 @@ std::wstring serializeStateVector(std::vector<OneDriveState> states) {
 
 GUID CLSID_FileCoAuth_StorageProviderStatusUISourceFactory = { /* 0827D883-485C-4D62-BA2C-A332DBF3D4B0 */  0x0827D883, 0x485C,  0x4D62, {0xBA, 0x2C, 0xA3, 0x32, 0xDB, 0xF3, 0xD4, 0xB0} };
 
-void safeStringCopy(void* dest, int dest_size, void* source, int source_size) {
+/// <summary>
+///     Sa
+/// </summary>
+/// <param name="dest"></param>
+/// <param name="dest_size"></param>
+/// <param name="source"></param>
+/// <param name="source_size"></param>
+void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_size) {
+    if (dest == nullptr || source == nullptr) {
+        throw std::invalid_argument("Null pointer provided for source or destination.");
+    }
     int realSize = (min(source_size, dest_size)) * (sizeof TCHAR);
     ZeroMemory(dest, dest_size * (sizeof TCHAR));
-    if (nullptr != source)
-    {
-        std::memcpy(dest, source, realSize);
-    }
+    std::memcpy(dest, source, realSize);
+
 }
 
 #include <windows.h>
@@ -194,21 +203,22 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
 
 std::wstring getCurrentUserSid() {
 	HANDLE hToken;
-	DWORD dwLength;
+	DWORD dwLength = 0;
 	PTOKEN_USER pTokenUser;
 	std::wstring sidString;
     if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
-		GetTokenInformation(hToken, TokenUser, NULL, 0, &dwLength);
-		pTokenUser = (PTOKEN_USER)HeapAlloc(GetProcessHeap(), 0, dwLength);
-        LPWSTR rawSidString = NULL;
-        if (pTokenUser != NULL) {
-            if (GetTokenInformation(hToken, TokenUser, pTokenUser, dwLength, &dwLength)) {
-				ConvertSidToStringSidW(pTokenUser->User.Sid, &rawSidString);
-                sidString = rawSidString;
-                LocalFree(rawSidString);
-			}
-			HeapFree(GetProcessHeap(), 0, pTokenUser);
-		}
+        if (GetTokenInformation(hToken, TokenUser, NULL, 0, &dwLength) == 0) {
+            pTokenUser = (PTOKEN_USER)HeapAlloc(GetProcessHeap(), 0, dwLength);
+            LPWSTR rawSidString = NULL;
+            if (pTokenUser != NULL) {
+                if (GetTokenInformation(hToken, TokenUser, pTokenUser, dwLength, &dwLength)) {
+                    ConvertSidToStringSidW(pTokenUser->User.Sid, &rawSidString);
+                    sidString = rawSidString;
+                    LocalFree(rawSidString);
+                }
+                HeapFree(GetProcessHeap(), 0, pTokenUser);
+            }
+        }
 		CloseHandle(hToken);
 	}
 	return sidString;

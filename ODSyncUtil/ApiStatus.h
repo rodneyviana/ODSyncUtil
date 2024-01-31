@@ -15,13 +15,13 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-const int MAX_STATE_LABEL = 256;
-const int MAX_ICON_URI = 1024;
-const int MAX_QUOTA_LABEL = 256;
-const int MAX_SID = 256;
-const int MAX_USER_NAME = 2048;
-const int MAX_SERVICE_NAME = 1024;
-const int MAX_SYNC_ROOT_ID = 1024;
+const size_t MAX_STATE_LABEL = 256;
+const size_t MAX_ICON_URI = 1024;
+const size_t MAX_QUOTA_LABEL = 256;
+const size_t MAX_SID = 256;
+const size_t MAX_USER_NAME = 2048;
+const size_t MAX_SERVICE_NAME = 1024;
+const size_t MAX_SYNC_ROOT_ID = 1024;
 
 struct  OneDriveState {
     int CurrentState;
