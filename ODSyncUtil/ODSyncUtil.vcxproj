@@ -146,9 +146,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="Get-ODStatus.ps1">
+    <CopyFileToFolders Include="Get-ODStatus.ps1">
       <DeploymentContent>true</DeploymentContent>
-    </None>
+      <FileType>Script</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </CopyFileToFolders>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
