@@ -90,13 +90,13 @@ IconColorB       : 184
 
 1. Download (https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll)https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll
 2. Unblock the DLL ( Right Click | Properties... | Unblock )
-3. Register the DLL using: regsvr32 and take note of the download folder. The command below is using c:\temp as the folder where ``OneDriveFlyoutPS.dll`` is locatedPlease adjust it accordingly
+3. Register the DLL using: regsvr32 and take note of the download folder. It is necessary to run this in the **command prompt as ADMINISTRATOR** or you will get access denied. The command below is using c:\temp as the folder where ``OneDriveFlyoutPS.dll`` is locatedPlease adjust it accordingly
 ```batch
 regsvr32 /i c:\temp\OneDriveFlyoutPS.dll
 ```
 4. You will see a pop-up saying that it could not find the registration code, you can ignore it, as the proxy has no code only the COM proxy/stub (**don't install it on Windows 11** as the COM is registered there)
 5. Now you can run the 64-bit version of the util
-6. If you want to uninstall the proxy/stub, run:
+6. If you want to uninstall the proxy/stub, run this in Administrator mode:
 ```batch
 regsvr32 /u c:\temp\OneDriveFlyoutPS.dll
 ```
