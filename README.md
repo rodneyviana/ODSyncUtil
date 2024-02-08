@@ -88,7 +88,7 @@ IconColorB       : 184
 
 ### Steps
 
-1. Download (https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll)https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll
+1. Download [OneDriveFlyoutPS.dll](https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll)
 2. Unblock the DLL ( Right Click | Properties... | Unblock )
 3. Register the DLL using: regsvr32 and take note of the download folder. It is necessary to run this in the **command prompt as ADMINISTRATOR** or you will get access denied. The command below is using c:\temp as the folder where ``OneDriveFlyoutPS.dll`` is locatedPlease adjust it accordingly
 ```batch
