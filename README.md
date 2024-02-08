@@ -1,4 +1,5 @@
-**OneDrive Sync Status for Windows 11 and newer Windows 10**
+# OneDrive Sync Status for Windows 11 and newer Windows 10
+## Go to the Windows 10 Additional Config if it applies to you
 
 How to use it:
 - Download the latest release (32 or 64 bits)
@@ -79,4 +80,24 @@ IconColorG       : 95
 IconColorB       : 184
 ```
 - Notice that CurrentState is a number. To have a better idea of what each number means check the iConUri file name (example: 0 = "CloudIconSynced")
+
+## Windows 10 Additional Configuration (Don't come here if you are using it on Windows 11)
+
+- Windows 10 version only works on Windows 10 64-bit (no 32-bit version for now)
+- Windows 10 requires the installation of a Proxy / Stub for the StorageProvider for OneDrive
+
+### Steps
+
+1. Download (https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll)https://github.com/rodneyviana/ODSyncService/blob/master/Binaries/Beta/OneDriveFlyoutPS.dll
+2. Unblock the DLL ( Right Click | Properties... | Unblock )
+3. Register the DLL using: regsvr32 and take note of the download folder. The command below is using c:\temp as the folder where ``OneDriveFlyoutPS.dll`` is locatedPlease adjust it accordingly
+```batch
+regsvr32 /i c:\temp\OneDriveFlyoutPS.dll
+```
+4. You will see a pop-up saying that it could not find the registration code, you can ignore it, as the proxy has no code only the COM proxy/stub (**don't install it on Windows 11** as the COM is registered there)
+5. Now you can run the 64-bit version of the util
+6. If you want to uninstall the proxy/stub, run:
+```batch
+regsvr32 /u c:\temp\OneDriveFlyoutPS.dll
+```
 
