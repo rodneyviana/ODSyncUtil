@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ODSyncUtil", "ODSyncUtil\ODSyncUtil.vcxproj", "{D0005838-F790-4CC2-8A0B-CB9B84C76BAB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OneDriveFlyoutPS", "OneDriveFlyoutPS\OneDriveFlyoutPS.vcxproj", "{24CF127E-5AD2-492C-8D8D-5A413844E189}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D0005838-F790-4CC2-8A0B-CB9B84C76BAB}.Release|x64.Build.0 = Release|x64
 		{D0005838-F790-4CC2-8A0B-CB9B84C76BAB}.Release|x86.ActiveCfg = Release|Win32
 		{D0005838-F790-4CC2-8A0B-CB9B84C76BAB}.Release|x86.Build.0 = Release|Win32
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Debug|x64.ActiveCfg = Debug|x64
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Debug|x64.Build.0 = Debug|x64
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Debug|x86.ActiveCfg = Debug|Win32
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Debug|x86.Build.0 = Debug|Win32
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Release|x64.ActiveCfg = Release|x64
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Release|x64.Build.0 = Release|x64
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Release|x86.ActiveCfg = Release|Win32
+		{24CF127E-5AD2-492C-8D8D-5A413844E189}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
