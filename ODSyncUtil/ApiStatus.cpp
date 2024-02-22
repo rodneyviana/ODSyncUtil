@@ -1,7 +1,7 @@
 
 #include "ApiStatus.h"
 #include <stdexcept>
-
+#include "Debug.hpp"
 
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
@@ -131,15 +131,17 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
     HRESULT getHR = S_OK;
     ABI::Windows::Storage::Provider::IStorageProviderStatusUI* status = nullptr;
     HRESULT hr = pSource->GetStatusUI(&status);
+    Debug.Write(L"GetStatusUI: 0x%08x\n", hr);
     if (SUCCEEDED(hr))
     {
         ABI::Windows::Storage::Provider::StorageProviderState state = {};
         getHR = status->get_ProviderState(&state);
-
+        Debug.Write(L"get_ProviderState: 0x%08x\n", getHR);
         currentState.CurrentState = state;
         // Test ProviderStateLabel
         HSTRING stateLable = nullptr;
         getHR = status->get_ProviderStateLabel(&stateLable);
+        Debug.Write(L"get_ProviderStateLabel: 0x%08x\n", getHR);
         UINT32 stateLableLength = 0;
         auto rawLabel = WindowsGetStringRawBuffer(stateLable, &stateLableLength);
         safeStringCopy(&(currentState.Label), MAX_STATE_LABEL, (void*)rawLabel, stateLableLength);
@@ -148,12 +150,13 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
         // Test ProviderStateIcon
         ABI::Windows::Foundation::IUriRuntimeClass* uri = nullptr;
         getHR = status->get_ProviderStateIcon(&uri);
-
+        Debug.Write(L"get_ProviderStateIcon: 0x%08x\n", getHR);
         if (SUCCEEDED(getHR))
         {
             HSTRING stateIcon = nullptr;
             UINT32 stateIconLength = 0;
             getHR = uri->get_AbsoluteUri(&stateIcon);
+            Debug.Write(L"get_AbsoluteUri: 0x%08x\n", getHR);
             auto rawIcon = WindowsGetStringRawBuffer(stateIcon, &stateIconLength);
             safeStringCopy(&(currentState.IconUri), MAX_ICON_URI, (void*)rawIcon, stateIconLength);
             //std::wstring stateIconString = WindowsGetStringRawBuffer(stateIcon, &stateIconLength);
@@ -167,12 +170,14 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
         // Test StorageProviderQuotaUI
         ABI::Windows::Storage::Provider::IStorageProviderQuotaUI* quotaUI = nullptr;
         getHR = status->get_QuotaUI(&quotaUI);
+        Debug.Write(L"get_QuotaUI: 0x%08x\n", getHR);
 
         if (SUCCEEDED(getHR))
         {
             HSTRING quotaUsedLabel = nullptr;
             UINT32 labelLength = 0;
             HRESULT getQuotaHR = quotaUI->get_QuotaUsedLabel(&quotaUsedLabel);
+            Debug.Write(L"get_QuotaUsedLabel: 0x%08x\n", getQuotaHR);
             if (!SUCCEEDED(getQuotaHR))
             {
                 currentState.isQuotaAvailable = FALSE;
@@ -189,7 +194,9 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
             uint64_t bytesUsed = 0;
             uint64_t bytesTotal = 0;
             HRESULT getUsedQuota = quotaUI->get_QuotaUsedInBytes(&bytesUsed);
+            Debug.Write(L"get_QuotaUsedInBytes: 0x%08x\n", getUsedQuota);
             HRESULT getTotalQuota = quotaUI->get_QuotaTotalInBytes(&bytesTotal);
+            Debug.Write(L"get_QuotaTotalInBytes: 0x%08x\n", getTotalQuota);
             currentState.UsedQuota = bytesUsed;
             currentState.TotalQuota = bytesTotal;
             //std::cout << "Current total Quota in bytes is: " << std::dec << bytesTotal << " . HRESULT from get_QuotaTotalInBytes is: " << std::hex << getTotalQuota << std::endl;
@@ -197,11 +204,12 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
 
             ABI::Windows::Foundation::IReference<struct ABI::Windows::UI::Color>* pColorStruct = nullptr;
             HRESULT getColorHR = quotaUI->get_QuotaUsedColor(&pColorStruct);
-
+            Debug.Write(L"get_QuotaUsedColor: 0x%08x\n", getColorHR);
             if (SUCCEEDED(getColorHR))
             {
                 ABI::Windows::UI::Color quotaColor;
                 getColorHR = pColorStruct->get_Value(&quotaColor);
+                Debug.Write(L"get_Value Color: 0x%08x\n", getColorHR);
                 currentState.IconColorA = quotaColor.A;
                 currentState.IconColorB = quotaColor.B;
                 currentState.IconColorG = quotaColor.G;
@@ -248,9 +256,13 @@ std::wstring getCurrentUserSid() {
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState)
 {
     const auto sid = extractSid(syncrootId);
+    Debug.Write(L"SID: %s\n", sid.c_str());
     const auto user = GetUserFromSid(sid);
+    Debug.Write(L"User: %s\n", user.c_str());
     const auto type = extactType(syncrootId);
+    Debug.Write(L"Type: %s\n", type.c_str());
     ZeroMemory(&currentState, sizeof(OneDriveState));
+
 
     safeStringCopy(&(currentState.SyncRootId), MAX_SYNC_ROOT_ID, (void*)syncrootId.c_str(), syncrootId.size());
     safeStringCopy(&(currentState.Sid), MAX_SID, (void*)sid.c_str(), sid.size());
@@ -258,6 +270,7 @@ HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& current
     safeStringCopy(&(currentState.ServiceName), MAX_SERVICE_NAME, (void*)type.c_str(), type.size());
 
     auto userSid = getCurrentUserSid();
+    Debug.Write(L"Current User SID: %s\n", userSid.c_str());
     if (sid != userSid) {
 		return ERROR_INVALID_SID;
     }
@@ -267,21 +280,21 @@ HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& current
     ABI::Windows::Storage::Provider::IStorageProviderStatusUISource* pSource = nullptr;
 
     HRESULT hr = CoCreateInstance(CLSID_FileCoAuth_StorageProviderStatusUISourceFactory, NULL, CLSCTX_LOCAL_SERVER, __uuidof(IUnknown), (void**)&pUnk);
-
-    //std::cout << "CoCreateInstance: " << std::hex << hr << std::endl;
+    Debug.Write(L"CoCreateInstance Storage Provider for OneDrive: 0x%08x\n", hr);
 
     if (SUCCEEDED(hr))
     {
         GUID guidIID = __uuidof(ABI::Windows::Storage::Provider::IStorageProviderStatusUISourceFactory);
         hr = pUnk->QueryInterface(guidIID, (void**)&pFactory);
-        //std::cout << "QueryInterface: " << std::hex << hr << std::endl;
+        Debug.Write(L"QueryInterface for IStorageProviderStatusUISourceFactory: 0x%08x\n", hr);
         if (SUCCEEDED(hr))
         {
             HSTRING hstrProviderId = nullptr;
             WindowsCreateString(syncrootId.c_str(), static_cast<UINT>(syncrootId.size()), &hstrProviderId);
 
             hr = pFactory->GetStatusUISource(hstrProviderId, &pSource);
-            //std::cout << "Result of invoking GetStatusUISource: " << std::hex << hr << std::endl;
+            Debug.Write(L"GetStatusUISource: 0x%08x\n", hr);
+            
         }
     }
 
@@ -290,8 +303,7 @@ HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& current
     if (SUCCEEDED(hr))
     {
         hr = pSource->GetStatusUI(&status);
-
-        //std::cout << "Result from GetStatusUI: " << std::hex << hr << std::endl;
+        Debug.Write(L"GetStatusUI: 0x%08x\n", hr);
     }
 
     if (SUCCEEDED(hr))
