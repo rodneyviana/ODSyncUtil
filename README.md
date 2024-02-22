@@ -81,6 +81,25 @@ IconColorB       : 184
 ```
 - Notice that CurrentState is a number. To have a better idea of what each number means check the iConUri file name (example: 0 = "CloudIconSynced")
 
+## Troubleshooting
+
+```ODSyncUtil.exe``` can be called directly and it accepts parameters that can help troubleshoot the application.
+
+```
+Usage: ODSyncUtil [options]
+  -h                Show this help message
+  -s <filename>     Save the output to file (unicode little-endian by default)
+  -d                Debug the application (cannot be used with any other switch)
+```
+
+Example: save the output to a file and show debugging steps:
+
+```
+ODSyncUtil.exe -s output.txt -d
+```
+
+If you want to open an issue, please copy and paste the output of ```ODSyncUtil.exe -d``` - feel free to obfuscate SIDs
+
 ## Windows 10 Additional Configuration (Don't come here if you are using it on Windows 11)
 
 - Windows 10 version only works on Windows 10 64-bit (no 32-bit version for now)
