@@ -100,6 +100,24 @@ ODSyncUtil.exe -s output.txt -d
 
 If you want to open an issue, please copy and paste the output of ```ODSyncUtil.exe -d``` - feel free to obfuscate SIDs
 
+### Issue 1: IStorageProvider is not available 0x80004002
+
+**Symptom:**
+
+You see the information below when running ```ODSyncUtil``` -d:
+```
+CoCreateInstance Storage Provider for OneDrive: 0x80004002
+```
+**Cause:**
+
+Your Windows version does not include IStorageProviderStatusUISourceFactory registration
+
+**Solution:**
+
+1. Upgrade Windows 11 to the newest version (preferred)
+2. If not possible to update follow steps in *"Windows 10 Additional Configuration (Don't come here if you are using it on Windows 11)"* even if you are running Windows 11
+
+
 ## Windows 10 Additional Configuration (Don't come here if you are using it on Windows 11)
 
 - Windows 10 version only works on Windows 10 64-bit (no 32-bit version for now)
