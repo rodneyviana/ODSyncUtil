@@ -80,6 +80,15 @@ IconColorG       : 95
 IconColorB       : 184
 ```
 - Notice that CurrentState is a number. To have a better idea of what each number means check the iConUri file name (example: 0 = "CloudIconSynced")
+- All the state icon files:
+```
+CloudIconError.svg        ---> Error
+CloudIconOffline.svg      ---> Offline
+CloudIconPaused.svg       ---> Paused
+CloudIconSynced.svg       ---> Synced
+CloudIconSyncing.svg      ---> Syncing
+CloudIconWarning.svg      ---> Warning
+```
 
 ## Troubleshooting
 
