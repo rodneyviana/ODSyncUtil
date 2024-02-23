@@ -98,7 +98,8 @@ CloudIconWarning.svg      ---> Warning
 Usage: ODSyncUtil [options]
   -h                Show this help message
   -s <filename>     Save the output to file (unicode little-endian by default)
-  -d                Debug the application (cannot be used with any other switch)
+  -d                Debug the application
+  -q                Ignore quota information (avoid crash situations)
 ```
 
 Example: save the output to a file and show debugging steps:
