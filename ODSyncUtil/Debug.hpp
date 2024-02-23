@@ -14,6 +14,7 @@ public:
     void Write(const WCHAR* format, ...);
 
     bool isToStdOutput;
+    bool ignoreQuota;
 
 private:
     DebugClass();

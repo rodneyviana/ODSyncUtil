@@ -31,4 +31,5 @@ void DebugClass::Write(const WCHAR* format, ...)
     }
 }
 
-DebugClass::DebugClass() : isToStdOutput(false) {}
+DebugClass::DebugClass() : isToStdOutput(false),
+    ignoreQuota(false) {}

@@ -168,12 +168,18 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
             return getHR;
         }
 
+        if (Debug.ignoreQuota) {
+            Debug.Write(L"Quota is ignored\n");
+			return getHR;
+		}
+
         // Test StorageProviderQuotaUI
         ABI::Windows::Storage::Provider::IStorageProviderQuotaUI* quotaUI = nullptr;
         getHR = status->get_QuotaUI(&quotaUI);
         Debug.Write(L"get_QuotaUI: 0x%08x\n", getHR);
+        Debug.Write(L"QuotaUI Pointer: 0x%p\n", quotaUI);
 
-        if (SUCCEEDED(getHR))
+        if (SUCCEEDED(getHR) && quotaUI)
         {
             HSTRING quotaUsedLabel = nullptr;
             UINT32 labelLength = 0;

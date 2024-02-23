@@ -20,6 +20,7 @@ struct CommandLineArgs
 {
     std::string saveFileName;
     bool isDebug;
+    bool ignoreQuota;
 };
 
 std::wstring GetFileVersion(const std::string& filePath) {
@@ -64,13 +65,15 @@ void PrintUsage(std::wstring FileVersion)
     std::cout << "Usage: ODSyncUtil [options]" << "\n";
     std::cout << "  -h                Show this help message\n";
     std::cout << "  -s <filename>     Save the output to file (UTF-8 unicode based on locale code page)\n";
-    std::cout << "  -d                Debug the application (cannot be used with any other switch)\n";
+    std::cout << "  -d                Debug the application\n";
+    std::cout << "  -q                Ignore quota information (avoid crash situations)\n";
 }
 
 CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
 {
     CommandLineArgs args;
     args.isDebug = false;
+    args.ignoreQuota = false;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -89,6 +92,10 @@ CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
         {
             args.isDebug = true;
         }
+        else if (arg == "-q")
+        {
+			args.ignoreQuota = true;
+		}
         else
         {
             std::cerr << "Unknown argument: " << arg << "\n";
@@ -108,9 +115,11 @@ int main(int argc, char** argv)
     std::locale::global(loc);
     std::wcout.imbue(loc);
     Debug.isToStdOutput = args.isDebug;
+    Debug.ignoreQuota = args.ignoreQuota;
     Debug.Write(L"Command line arguments parsed\n");
     Debug.Write(L"Save file name: %s\n", args.saveFileName.c_str());
     Debug.Write(L"Is debug: %d\n", args.isDebug);
+    Debug.Write(L"Ignore quota: %d\n", args.ignoreQuota);
 	auto hr = ::CoInitialize(NULL);
     if (FAILED(hr))
     {
