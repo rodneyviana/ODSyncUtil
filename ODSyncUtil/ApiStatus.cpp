@@ -56,9 +56,10 @@ GUID CLSID_FileCoAuth_StorageProviderStatusUISourceFactory = { /* 0827D883-485C-
 /// <param name="source_size"></param>
 void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_size) {
     if (dest == nullptr || source == nullptr) {
+        Debug.Write(L"Null pointer provided for source or destination.\n");
         throw std::invalid_argument("Null pointer provided for source or destination.");
     }
-    int realSize = (min(source_size, dest_size)) * (sizeof TCHAR);
+    size_t realSize = (min(source_size, dest_size)) * (sizeof TCHAR);
     ZeroMemory(dest, dest_size * (sizeof TCHAR));
     std::memcpy(dest, source, realSize);
 
@@ -181,13 +182,17 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
             if (!SUCCEEDED(getQuotaHR))
             {
                 currentState.isQuotaAvailable = FALSE;
+                Debug.Write(L"Quota is not available for this sync root. This is not an error, but no quota info\n");
                 return getHR; // quota may not be available, but it is ok
             }
             else {
                 currentState.isQuotaAvailable = TRUE;
             }
             auto rawQuotaUsed = WindowsGetStringRawBuffer(quotaUsedLabel, &labelLength);
-            safeStringCopy(&(currentState.QuotaLabel), MAX_QUOTA_LABEL, (void*)rawQuotaUsed, labelLength);
+            Debug.Write(L"Raw Quota Used Pointer: 0x%p, Length: %d\n", rawQuotaUsed, labelLength);
+            if (rawQuotaUsed) {
+                safeStringCopy(&(currentState.QuotaLabel), MAX_QUOTA_LABEL, (void*)rawQuotaUsed, labelLength);
+            }
             //std::wstring quotaUsedLabelString = WindowsGetStringRawBuffer(quotaUsedLabel, &labelLength);
             //std::wcout << L"Current QuotaUsedLabel is: " << quotaUsedLabelString << " . HRESULT from get_QuotaUsedLabel is: " << std::hex << getHR << std::endl;
 

@@ -96,12 +96,6 @@ CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
         }
     }
 
-    if (args.isDebug && !args.saveFileName.empty())
-    {
-		std::cerr << "Error: -d cannot be used with other parameters\n";
-		exit(1);
-	}
-
     return args;
 }
 
