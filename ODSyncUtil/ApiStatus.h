@@ -56,4 +56,13 @@ std::wstring serializeStateVector(std::vector<OneDriveState> states);
 /// <returns>HRESULT</returns>
 HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& currentState);
 
+/// <summary>
+///     Copy raw pointer string from source to destination
+/// </summary>
+/// <param name="dest"></param>
+/// <param name="dest_size"></param>
+/// <param name="source"></param>
+/// <param name="source_size"></param>
+void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_size);
+
 #endif // !ONE_DRIVE_STATUS_H

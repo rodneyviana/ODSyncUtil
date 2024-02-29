@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "Debug.hpp"
 
+
+
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
     rapidjson::Writer<rapidjson::GenericStringBuffer<rapidjson::UTF16<>>, rapidjson::UTF16<>> writer(buffer);

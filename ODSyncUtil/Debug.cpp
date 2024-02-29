@@ -1,5 +1,7 @@
 #include "Debug.hpp"
 
+
+
 DebugClass& DebugClass::getInstance()
 {
     static DebugClass instance;
