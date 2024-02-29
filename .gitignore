@@ -46,3 +46,10 @@
 *.log
 *.idb
 *.pdb
+/ODSyncLib/x64/Debug
+/ODSyncLib/RCa28944
+/ODSyncLib/RCb34924
+/ODSyncLib/RCc34924
+/ODSyncLib/RCd34924
+/ODSyncLib/RCa34924
+/ODSyncLib/RCe34924
