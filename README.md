@@ -89,6 +89,18 @@ CloudIconSynced.svg       ---> Synced
 CloudIconSyncing.svg      ---> Syncing
 CloudIconWarning.svg      ---> Warning
 ```
+## Update
+1. Thanks to user @aakash-shah, I have the mapping for all but Warning (that is probably 4). If anybody confirms, I update the table
+
+| CurrentState | Label | IconUri |
+| -------- | ------- | ------- |
+| 0 | OneDrive | CloudIconSynced.svg |
+| 1 | Syncing or "Signing in" | CloudIconSyncing.svg |
+| 2 | Paused | CloudIconPaused.svg |
+| 3 | Error | CloudIconError.svg |
+| 5 | Offline | CloudIconOffline.svg |
+
+2. Thanks to the collaboration of @variableresistor, we will soon have a version in PowerShell catalog
 
 ## Troubleshooting
 
