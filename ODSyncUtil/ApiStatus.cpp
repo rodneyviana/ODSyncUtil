@@ -2,8 +2,18 @@
 #include "ApiStatus.h"
 #include <stdexcept>
 #include "Debug.hpp"
+#include "SyncRoot.hpp"
+
+const int MAX_STATES = 5;
+const wchar_t* stateStrings[] = { L"Synced", L"Syncing", L"Paused", L"Error", L"Offline" };
 
 
+std::wstring getStringFromStatus(int status) {
+    if (status < 0 || status > MAX_STATES) {
+		return L"Unknown";
+	}
+	return stateStrings[status];
+}
 
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
@@ -15,12 +25,16 @@ std::wstring serializeStateVector(std::vector<OneDriveState> states) {
         writer.String(it->SyncRootId);
         writer.Key(L"CurrentState");
         writer.Int(it->CurrentState);
+        writer.Key(L"CurrentStateString");
+        writer.String(it->CurrentStateString);
         writer.Key(L"Sid");
         writer.String(it->Sid);
         writer.Key(L"UserName");
         writer.String(it->UserName);
         writer.Key(L"ServiceName");
         writer.String(it->ServiceName);
+        writer.Key(L"FolderPath");
+        writer.String(it->FolderPath);
         writer.Key(L"Label");
         writer.String(it->Label);
         writer.Key(L"IconUri");
@@ -141,6 +155,8 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
         getHR = status->get_ProviderState(&state);
         Debug.Write(L"get_ProviderState: 0x%08x\n", getHR);
         currentState.CurrentState = state;
+        const auto stateString = getStringFromStatus(state);
+        safeStringCopy(&(currentState.CurrentStateString), MAX_STATUS_STRING, (void*)stateString.c_str(), stateString.size());
         // Test ProviderStateLabel
         HSTRING stateLable = nullptr;
         getHR = status->get_ProviderStateLabel(&stateLable);
@@ -275,12 +291,14 @@ HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& current
     const auto type = extactType(syncrootId);
     Debug.Write(L"Type: %s\n", type.c_str());
     ZeroMemory(&currentState, sizeof(OneDriveState));
+    const auto folder = SyncRootReader::GetFolderFromSyncRootId(syncrootId);
 
 
     safeStringCopy(&(currentState.SyncRootId), MAX_SYNC_ROOT_ID, (void*)syncrootId.c_str(), syncrootId.size());
     safeStringCopy(&(currentState.Sid), MAX_SID, (void*)sid.c_str(), sid.size());
     safeStringCopy(&(currentState.UserName), MAX_USER_NAME, (void*)user.c_str(), user.size());
     safeStringCopy(&(currentState.ServiceName), MAX_SERVICE_NAME, (void*)type.c_str(), type.size());
+    safeStringCopy(&(currentState.FolderPath), MAX_PATH_STATUS, (void*)folder.c_str(), folder.size());
 
     auto userSid = getCurrentUserSid();
     Debug.Write(L"Current User SID: %s\n", userSid.c_str());

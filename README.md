@@ -10,37 +10,41 @@ How to use it:
 ```
 .\Get-ODStatus.ps1
 
-SyncRootId       : OneDrive!S-1-12-1-11700000-12300000-1832875930-630280000!Business1|10935082bea94993a9037f7a6709947e
-CurrentState     : 0
-Sid              : S-1-12-1-11700000-12300000-1832875930-630280000
-UserName         : CONTOSO\rviana
-ServiceName      : Business1
-Label            : OneDrive
-IconUri          : file:///C:/Users/rviana/AppData/Local/Microsoft/OneDrive/24.017.0123.0001/images/lightTheme/CloudIconSynced.svg
-isQuotaAvailable : True
-TotalQuota       : 5497558138880
-UsedQuota        : 74059110815
-QuotaLabel       : 69.0 GB used of 5 TB (1%)
-IconColorA       : 255
-IconColorR       : 0
-IconColorG       : 95
-IconColorB       : 184
-
-SyncRootId       : OneDrive!S-1-12-1-11700000-12300000-1832875930-630280000!Personal|B7C3EE2A336CFE2E!125
-CurrentState     : 0
-Sid              : S-1-12-1-11700000-12300000-1832875930-630280000
-UserName         : CONTOSO\rviana
-ServiceName      : Personal
-Label            : OneDrive
-IconUri          : file:///C:/Users/rviana/AppData/Local/Microsoft/OneDrive/24.017.0123.0001/images/lightTheme/CloudIconSynced.svg
-isQuotaAvailable : True
-TotalQuota       : 1166083620864
-UsedQuota        : 293453640500
-QuotaLabel       : 273.3 GB used of 1 TB (25%)
-IconColorA       : 255
-IconColorR       : 0
-IconColorG       : 95
-IconColorB       : 184
+SyncRootId         : OneDrive!S-1-12-1-11700000-12300000-1832875930-630280000!Business1|10935082bea94993a9037f7a6709947e
+CurrentState       : 0
+CurrentStateString : Synced
+Sid                : S-1-12-1-11700000-12300000-1832875930-630280000
+UserName           : CONTOSO\rviana
+ServiceName        : Business1
+FolderPath         : C:\Users\rviana.CONTOSO\OneDrive - Contoso
+Label              : OneDrive
+IconUri            : file:///C:/Users/rviana/AppData/Local/Microsoft/OneDrive/24.017.0123.0001/images/lightTheme/CloudIconSynced.svg
+isQuotaAvailable   : True
+TotalQuota         : 5497558138880
+UsedQuota          : 74059110815
+QuotaLabel         : 69.0 GB used of 5 TB (1%)
+IconColorA         : 255
+IconColorR         : 0
+IconColorG         : 95
+IconColorB         : 184
+				   
+SyncRootId         : OneDrive!S-1-12-1-11700000-12300000-1832875930-630280000!Personal|B7C3EE2A336CFE2E!125
+CurrentState       : 0
+CurrentStateString : Synced
+Sid                : S-1-12-1-11700000-12300000-1832875930-630280000
+UserName           : CONTOSO\rviana
+ServiceName        : Personal
+FolderPath         : C:\Users\rviana.CONTOSO\OneDrive
+Label              : OneDrive
+IconUri            : file:///C:/Users/rviana/AppData/Local/Microsoft/OneDrive/24.017.0123.0001/images/lightTheme/CloudIconSynced.svg
+isQuotaAvailable   : True
+TotalQuota         : 1166083620864
+UsedQuota          : 293453640500
+QuotaLabel         : 273.3 GB used of 1 TB (25%)
+IconColorA         : 255
+IconColorR         : 0
+IconColorG         : 95
+IconColorB         : 184
 ```
 
 - Example 2 (.exe in another folder):
@@ -79,28 +83,14 @@ IconColorR       : 0
 IconColorG       : 95
 IconColorB       : 184
 ```
-- Notice that CurrentState is a number. To have a better idea of what each number means check the iConUri file name (example: 0 = "CloudIconSynced")
-- All the state icon files:
-```
-CloudIconError.svg        ---> Error
-CloudIconOffline.svg      ---> Offline
-CloudIconPaused.svg       ---> Paused
-CloudIconSynced.svg       ---> Synced
-CloudIconSyncing.svg      ---> Syncing
-CloudIconWarning.svg      ---> Warning
-```
 ## Update
-1. Thanks to user @aakash-shah, I have the mapping for all but Warning (that is probably 4). If anybody confirms, I update the table
 
-| CurrentState | Label | IconUri |
-| -------- | ------- | ------- |
-| 0 | OneDrive | CloudIconSynced.svg |
-| 1 | Syncing or "Signing in" | CloudIconSyncing.svg |
-| 2 | Paused | CloudIconPaused.svg |
-| 3 | Error | CloudIconError.svg |
-| 5 | Offline | CloudIconOffline.svg |
-
-2. Thanks to the collaboration of @variableresistor, we will soon have a version in PowerShell catalog
+- As requested by user @aakash-shah, I have added the status string to the output. The status string is the human-readable version of the status.
+- In this same request, I added the local path to the output. This is useful when you have multiple OneDrive accounts and you want to know which one is being reported.
+- There is now a DLL version that is usefull if you want to use it in your own application. The DLL is located in the Binaries folder.
+- There is a PowerShell version that is a wrapper around the DLL. The DLL is located in the Binaries folder.
+- Prefer to use the PowerShell version that call the .EXE (Get-ODStatus.ps1)
+- You don't need the DLL and .EXE at the same time. You can choose one or another with its appropriate PowerShell script.
 
 ## Troubleshooting
 

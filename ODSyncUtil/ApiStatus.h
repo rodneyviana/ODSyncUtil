@@ -22,14 +22,18 @@ const size_t MAX_SID = 256;
 const size_t MAX_USER_NAME = 2048;
 const size_t MAX_SERVICE_NAME = 1024;
 const size_t MAX_SYNC_ROOT_ID = 1024;
+const size_t MAX_PATH_STATUS = 1024;
+const size_t MAX_STATUS_STRING = 30;
 
-struct alignas(16) OneDriveState {
+struct OneDriveState {
     int CurrentState;
+    TCHAR CurrentStateString[MAX_STATUS_STRING];
     TCHAR SyncRootId[MAX_SYNC_ROOT_ID];
     TCHAR Sid[MAX_SID];
     TCHAR UserName[MAX_USER_NAME];
     TCHAR Label[MAX_STATE_LABEL];
     TCHAR ServiceName[MAX_SERVICE_NAME];
+    TCHAR FolderPath[MAX_PATH_STATUS];
     TCHAR IconUri[MAX_ICON_URI];
     BOOL isQuotaAvailable;
     uint64_t TotalQuota;
@@ -64,5 +68,8 @@ HRESULT getInstanceStatus(const std::wstring& syncrootId, OneDriveState& current
 /// <param name="source"></param>
 /// <param name="source_size"></param>
 void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_size);
+
+
+std::wstring extractSid(const std::wstring& str);
 
 #endif // !ONE_DRIVE_STATUS_H
