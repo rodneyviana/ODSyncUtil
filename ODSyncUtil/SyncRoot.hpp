@@ -8,11 +8,10 @@
 #include <string>
 #include <wtypes.h>
 #include <stdexcept>
-
-
+#include "ApiStatus.h"
 
 /// <summary>
-///  Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+///  Class to enumerate subkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
 /// </summary>
 class SyncRootReader
 {
@@ -21,16 +20,16 @@ private:
 	static constexpr const TCHAR* m_keyName = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\SyncRootManager";
 public:
 	/// <summary>
-	///  Class to enumerate sunkeys of HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager
+	///  Constructor
 	/// </summary>
-	/// <returns></returns>
 	SyncRootReader();
 
 	/// <summary>
-	///  Enumerate the subkeys of the SyncRootManager key
+	///  Enumerate the subkeys of the SyncRootManager key for the given SID string
 	/// </summary>
+	/// <param name="sidStr">The SID string of the current user</param>
 	/// <returns>A vector of SyncRootId strings</returns>
-	std::vector<std::wstring> EnumerateSubKeys();
+	std::vector<std::wstring> EnumerateSubKeys(const std::wstring& sidStr);
 
 	/// <summary>
 	///  Get the folder path from the sync root id
@@ -39,7 +38,6 @@ public:
 	/// <returns>The folder path</returns>
 	/// <exception cref="std::runtime_error">Thrown if the sync root id is not found</exception>
 	static std::wstring GetFolderFromSyncRootId(const std::wstring& syncRootId);
-
 
 	/// <summary>
 	///  Destructor

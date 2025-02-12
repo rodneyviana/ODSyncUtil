@@ -72,4 +72,9 @@ void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_si
 
 std::wstring extractSid(const std::wstring& str);
 
+std::wstring HResultToString(HRESULT hr);
+
+std::wstring getCurrentUserSid();
+
+
 #endif // !ONE_DRIVE_STATUS_H

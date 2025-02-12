@@ -15,6 +15,10 @@ std::wstring getStringFromStatus(int status) {
 	return stateStrings[status];
 }
 
+// Go to Tools > NuGet Package Manager > Package Manager Console
+// Make sure you restore the rapidjson using the following command:
+//       Update-Package -reinstall
+
 std::wstring serializeStateVector(std::vector<OneDriveState> states) {
     rapidjson::GenericStringBuffer<rapidjson::UTF16<>> buffer;
     rapidjson::Writer<rapidjson::GenericStringBuffer<rapidjson::UTF16<>>, rapidjson::UTF16<>> writer(buffer);
@@ -84,6 +88,21 @@ void safeStringCopy(void* dest, size_t dest_size, void* source, size_t source_si
 #include <windows.h>
 #include <sddl.h>
 #include <string>
+
+
+/// <summary>
+/// Converts an HRESULT error code to a readable string message.
+/// </summary>
+/// <param name="hr">The HRESULT error code.</param>
+/// <returns>A string containing the error message corresponding to the HRESULT code.</returns>
+std::wstring HResultToString(HRESULT hr) {
+	wchar_t* messageBuffer = nullptr;
+	size_t size = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&messageBuffer, 0, NULL);
+	std::wstring message(messageBuffer, size);
+	LocalFree(messageBuffer);
+	return message;
+}
 
 /// <summary>
 ///   Extract the type of service from the syncrootId
