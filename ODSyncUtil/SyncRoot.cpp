@@ -72,12 +72,12 @@ std::vector<std::wstring> SyncRootReader::EnumerateSubKeys(const std::wstring& s
     WCHAR szSubKeyName[256];
     DWORD cchSubKeyName = ARRAYSIZE(szSubKeyName);
     LONG result;
-
+	bool enumAllSyncRoots = Debug.enumarateAllSyncRoots;
     while ((result = RegEnumKeyEx(m_hKey, dwIndex, szSubKeyName, &cchSubKeyName, NULL, NULL, NULL, NULL)) == ERROR_SUCCESS)
     {
         // Check if the subkey is for the current user
         auto extractedSid = extractSid(szSubKeyName);
-        if (extractedSid != sidStr)
+        if (extractedSid != sidStr && !enumAllSyncRoots)
         {
 			Debug.Write(L"Skipping subkey %s as it does not match user SID\n", szSubKeyName);
             cchSubKeyName = ARRAYSIZE(szSubKeyName);

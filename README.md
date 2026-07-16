@@ -1,4 +1,67 @@
 # OneDrive Sync Status for Windows 11 and newer Windows 10
+# ODSyncUtil — OneDrive Synchronization Status Utility
+
+`ODSyncUtil` is an open-source Windows utility that reports the **real-time sync status of the OneDrive client** (Personal, Business, and SharePoint sync roots). It uses the modern `IStorageProviderStatusUISource` COM API available in Windows 11 (and recent builds of Windows 10) to obtain the same status information Windows Explorer shows in the OneDrive flyout.
+
+The output is emitted as **JSON**, making it easy to consume from scripts, monitoring tools, or the included PowerShell wrappers.
+
+- Project home: <https://github.com/rodneyviana/ODSyncUtil>
+- License: MIT
+- Author: Rodney Viana
+
+> Looking for how the code is organized? See [`ARCHITECTURE.md`](ARCHITECTURE.md) for a module-by-module breakdown and the runtime data flow.
+
+## Table of Contents
+
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Requirements](#requirements)
+- [Building from Source](#building-from-source)
+- [Quick Start](#quick-start)
+- [Command-line Options](#command-line-options)
+- [Status Values](#status-values)
+- [Repository Layout](#repository-layout)
+- [Detailed Examples and Troubleshooting](#detailed-examples-and-troubleshooting)
+
+## Features
+
+- Retrieves OneDrive sync status via the official Windows `StorageProviderStatusUI` API.
+- Reports per–sync-root information: current state, folder path, user, service name, label, icon, and quota.
+- Emits structured **JSON** for easy automation.
+- Ships as both a **standalone executable** (`ODSyncUtil.exe`) and a **DLL** (`ODSyncLib.dll`) for embedding in other applications.
+- Includes **PowerShell** helper scripts for both the EXE and the DLL.
+- Optional flags to ignore quota lookups (avoids rare crashes) and to enumerate all sync roots.
+
+## How It Works
+
+1. Windows registers each OneDrive sync root under the registry key
+   `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SyncRootManager`.
+2. `ODSyncUtil` enumerates the sync-root subkeys, filtering (by default) to the **current user's SID**.
+3. For each sync root it instantiates the OneDrive `IStorageProviderStatusUISource` COM object and queries the status UI, quota UI, icon, and labels.
+4. The collected data is serialized to JSON and written to standard output (and optionally to a file).
+
+## Requirements
+
+- **Windows 11**, or a recent **Windows 10** build that includes the `StorageProviderStatusUI` API
+  (Windows 10 requires the additional proxy/stub configuration described below).
+- The **OneDrive** client installed and running.
+- To build: **Visual Studio 2022** with the *Desktop development with C++* workload (C++14 toolset)
+  and the [RapidJSON](https://rapidjson.org/) NuGet package (restored via `packages.config`).
+
+## Building from Source
+
+1. Open `ODSyncUtil.sln` in Visual Studio 2022.
+2. Restore NuGet packages (RapidJSON). If the RapidJSON headers are missing, run
+   `Update-Package -reinstall` from *Tools > NuGet Package Manager > Package Manager Console*.
+3. Select the desired configuration/platform (for example `Release | x64`) and build.
+
+Build outputs:
+
+- `ODSyncUtil.exe` — standalone command-line tool.
+- `ODSyncLib.dll` — reusable library exporting `GetODSyncStatus`.
+
+## Quick Start
+
 ## Go to the Windows 10 Additional Config if it applies to you
 
 How to use it:
@@ -83,6 +146,44 @@ IconColorR       : 0
 IconColorG       : 95
 IconColorB       : 184
 ```
+## Command-line Options
+
+| Option           | Description                                                             |
+| ---------------- | --------------------------------------------------------------------- |
+| `-h`             | Show the help message.                                                 |
+| `-s <filename>`  | Save the JSON output to a file (UTF-8, based on the locale code page). |
+| `-d`             | Enable debug tracing to standard output.                              |
+| `-q`             | Ignore quota information (useful to avoid rare crash situations).     |
+| `-a`             | Check **all** sync roots, not just the current user's.                 |
+
+## Status Values
+
+The numeric `CurrentState` maps to the following `CurrentStateString` values:
+
+| Value | String   |
+| ----- | -------- |
+| 0     | Synced   |
+| 1     | Syncing  |
+| 2     | Paused   |
+| 3     | Error    |
+| 4     | Offline  |
+
+Any value outside this range is reported as `Unknown (n)`, where `n` is the invalid status value.
+
+## Repository Layout
+
+| Path                | Description                                                          |
+| ------------------- | ------------------------------------------------------------------- |
+| `ODSyncUtil.sln`    | Visual Studio solution.                                             |
+| `ODSyncUtil/`       | Standalone command-line executable project.                        |
+| `ODSyncLib/`        | DLL project exporting `GetODSyncStatus` (shares core sources).     |
+| `OneDriveFlyoutPS/` | Proxy/stub project for the `StorageProviderStatusUI` COM interfaces.|
+| `packages/`         | NuGet packages (RapidJSON).                                        |
+
+For a detailed description of each source file and the runtime data flow, see [`ARCHITECTURE.md`](ARCHITECTURE.md).
+
+## Detailed Examples and Troubleshooting
+
 ## Update
 
 - As requested by user @aakash-shah, I have added the status string to the output. The status string is the human-readable version of the status.

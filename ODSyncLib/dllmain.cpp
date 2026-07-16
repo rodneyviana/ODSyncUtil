@@ -39,7 +39,8 @@ HRESULT APIENTRY GetODSyncStatus(BOOL IgnoreQuota, WCHAR* Result, size_t MaxSize
 
     auto syncRootManager = new SyncRootReader();
     Debug.Write(L"SyncRootReader created\n");
-    std::vector<std::wstring> subKeys = syncRootManager->EnumerateSubKeys();
+    auto sid = getCurrentUserSid();
+    std::vector<std::wstring> subKeys = syncRootManager->EnumerateSubKeys(sid);
     Debug.Write(L"EnumerateSubKeys returned %d keys\n", subKeys.size());
     std::vector<OneDriveState> states;
     for (std::vector<std::wstring>::iterator it = subKeys.begin(); it != subKeys.end(); ++it) {

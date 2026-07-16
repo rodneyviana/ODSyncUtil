@@ -15,6 +15,7 @@ public:
 
     bool isToStdOutput;
     bool ignoreQuota;
+	bool enumarateAllSyncRoots;
 
 private:
     DebugClass();

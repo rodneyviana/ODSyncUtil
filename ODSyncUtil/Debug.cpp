@@ -34,4 +34,4 @@ void DebugClass::Write(const WCHAR* format, ...)
 }
 
 DebugClass::DebugClass() : isToStdOutput(false),
-    ignoreQuota(false) {}
+    ignoreQuota(false), enumarateAllSyncRoots(false) {}

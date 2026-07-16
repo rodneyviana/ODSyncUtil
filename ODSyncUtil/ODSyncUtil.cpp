@@ -21,6 +21,7 @@ struct CommandLineArgs
     std::string saveFileName;
     bool isDebug;
     bool ignoreQuota;
+	bool checkAllSyncRoots;
 };
 
 std::wstring GetFileVersion(const std::string& filePath) {
@@ -60,13 +61,14 @@ std::wstring GetFileVersion(const std::string& filePath) {
 void PrintUsage(std::wstring FileVersion)
 {
     std::wcout << L"ODSyncUtil - OneDrive Synchronization Utility Version " << FileVersion <<  L"\n";
-    std::cout << "Copyright (c) 2024 Rodney Viana (https://github.com/rodneyviana/ODSyncUtil)" << "\n";
+    std::cout << "Copyright (c) 2024-2026 Rodney Viana (https://github.com/rodneyviana/ODSyncUtil)" << "\n";
     std::cout << "MIT License" << "\n\n";
     std::cout << "Usage: ODSyncUtil [options]" << "\n";
     std::cout << "  -h                Show this help message\n";
     std::cout << "  -s <filename>     Save the output to file (UTF-8 unicode based on locale code page)\n";
     std::cout << "  -d                Debug the application\n";
     std::cout << "  -q                Ignore quota information (avoid crash situations)\n";
+	std::cout << "  -a                Check all sync roots (default is to check only the current user's sync root)\n";
 }
 
 CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
@@ -74,6 +76,7 @@ CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
     CommandLineArgs args;
     args.isDebug = false;
     args.ignoreQuota = false;
+	args.checkAllSyncRoots = false;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -95,6 +98,10 @@ CommandLineArgs ParseCommandLineArgs(int argc, char* argv[])
         else if (arg == "-q")
         {
 			args.ignoreQuota = true;
+		}
+        else if (arg == "-a")
+        {
+            args.checkAllSyncRoots = true;
 		}
         else
         {
@@ -120,6 +127,7 @@ int main(int argc, char** argv)
     Debug.Write(L"Save file name: %s\n", args.saveFileName.c_str());
     Debug.Write(L"Is debug: %d\n", args.isDebug);
     Debug.Write(L"Ignore quota: %d\n", args.ignoreQuota);
+	Debug.Write(L"Check all sync roots: %d\n", args.checkAllSyncRoots);
 	auto hr = ::CoInitialize(NULL);
     if (FAILED(hr))
     {

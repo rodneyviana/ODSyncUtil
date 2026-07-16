@@ -9,8 +9,8 @@ const wchar_t* stateStrings[] = { L"Synced", L"Syncing", L"Paused", L"Error", L"
 
 
 std::wstring getStringFromStatus(int status) {
-    if (status < 0 || status > MAX_STATES) {
-		return L"Unknown";
+    if (status < 0 || status >= MAX_STATES) {
+		return L"Unknown (" + std::to_wstring(status) + L")";
 	}
 	return stateStrings[status];
 }
