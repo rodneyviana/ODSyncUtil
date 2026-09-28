@@ -123,6 +123,7 @@ int main(int argc, char** argv)
     std::wcout.imbue(loc);
     Debug.isToStdOutput = args.isDebug;
     Debug.ignoreQuota = args.ignoreQuota;
+    Debug.enumarateAllSyncRoots = args.checkAllSyncRoots;
     Debug.Write(L"Command line arguments parsed\n");
     Debug.Write(L"Save file name: %s\n", args.saveFileName.c_str());
     Debug.Write(L"Is debug: %d\n", args.isDebug);

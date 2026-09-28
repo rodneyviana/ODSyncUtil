@@ -4,8 +4,8 @@
 #include "Debug.hpp"
 #include "SyncRoot.hpp"
 
-const int MAX_STATES = 5;
-const wchar_t* stateStrings[] = { L"Synced", L"Syncing", L"Paused", L"Error", L"Offline" };
+const int MAX_STATES = 6;
+const wchar_t* stateStrings[] = { L"Synced", L"Syncing", L"Paused", L"Error", L"Warning", L"Offline" };
 
 
 std::wstring getStringFromStatus(int status) {
@@ -170,11 +170,11 @@ HRESULT printStatusUI(ABI::Windows::Storage::Provider::IStorageProviderStatusUIS
     Debug.Write(L"GetStatusUI: 0x%08x\n", hr);
     if (SUCCEEDED(hr))
     {
-        ABI::Windows::Storage::Provider::StorageProviderState state = {};
+        auto state = static_cast<ABI::Windows::Storage::Provider::StorageProviderState>(-1);
         getHR = status->get_ProviderState(&state);
         Debug.Write(L"get_ProviderState: 0x%08x\n", getHR);
-        currentState.CurrentState = state;
-        const auto stateString = getStringFromStatus(state);
+        currentState.CurrentState = SUCCEEDED(getHR) ? static_cast<int>(state) : -1;
+        const auto stateString = getStringFromStatus(currentState.CurrentState);
         safeStringCopy(&(currentState.CurrentStateString), MAX_STATUS_STRING, (void*)stateString.c_str(), stateString.size());
         // Test ProviderStateLabel
         HSTRING stateLable = nullptr;

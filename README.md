@@ -1,5 +1,5 @@
 # OneDrive Sync Status for Windows 11 and newer Windows 10
-# ODSyncUtil — OneDrive Synchronization Status Utility
+# ODSyncUtil â€” OneDrive Synchronization Status Utility
 
 `ODSyncUtil` is an open-source Windows utility that reports the **real-time sync status of the OneDrive client** (Personal, Business, and SharePoint sync roots). It uses the modern `IStorageProviderStatusUISource` COM API available in Windows 11 (and recent builds of Windows 10) to obtain the same status information Windows Explorer shows in the OneDrive flyout.
 
@@ -26,7 +26,7 @@ The output is emitted as **JSON**, making it easy to consume from scripts, monit
 ## Features
 
 - Retrieves OneDrive sync status via the official Windows `StorageProviderStatusUI` API.
-- Reports per–sync-root information: current state, folder path, user, service name, label, icon, and quota.
+- Reports perâ€“sync-root information: current state, folder path, user, service name, label, icon, and quota.
 - Emits structured **JSON** for easy automation.
 - Ships as both a **standalone executable** (`ODSyncUtil.exe`) and a **DLL** (`ODSyncLib.dll`) for embedding in other applications.
 - Includes **PowerShell** helper scripts for both the EXE and the DLL.
@@ -57,8 +57,8 @@ The output is emitted as **JSON**, making it easy to consume from scripts, monit
 
 Build outputs:
 
-- `ODSyncUtil.exe` — standalone command-line tool.
-- `ODSyncLib.dll` — reusable library exporting `GetODSyncStatus`.
+- `ODSyncUtil.exe` â€” standalone command-line tool.
+- `ODSyncLib.dll` â€” reusable library exporting `GetODSyncStatus`.
 
 ## Quick Start
 
@@ -166,7 +166,8 @@ The numeric `CurrentState` maps to the following `CurrentStateString` values:
 | 1     | Syncing  |
 | 2     | Paused   |
 | 3     | Error    |
-| 4     | Offline  |
+| 4     | Warning  |
+| 5     | Offline  |
 
 Any value outside this range is reported as `Unknown (n)`, where `n` is the invalid status value.
 
